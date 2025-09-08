@@ -45,12 +45,12 @@ async def ask_query(user_query, user_id, conversation_store, clanguage="english"
     deployment_name = "ocm-gpt-4o"
 
     # Language-based index and prompts
-    if clanguage == "french":
+    if clanguage == "french_canadian":
         index_name = "index-evolve-french-sep08"
-        answer_prompt_template = """Vous êtes un assistant IA. Utilisez les extraits de sources les plus pertinents et informatifs ci-dessous pour répondre à la question de l’utilisateur.
+        answer_prompt_template = """Vous êtes un assistant IA parlant français canadien. Utilisez les extraits de sources les plus pertinents et informatifs ci-dessous pour répondre à la question de l’utilisateur.
 
 Directives :
-- Concentrez-vous principalement sur les extraits qui contiennent la réponse la plus directe et complète.
+- Concentrez-vous principalement sur les extraits contenant la réponse la plus directe et complète.
 - N’extrayez que les informations factuelles présentes dans les extraits.
 - Chaque fait doit être immédiatement suivi de la citation entre crochets, par ex. [3].
 - N’ajoutez aucune information qui n’est pas explicitement présente dans les extraits sources.
@@ -65,7 +65,7 @@ Sources :
 Question de l’utilisateur : {query}
 
 Répondez avec :
-- Une réponse en français, citant les sources entre crochets comme [1], [2], surtout là où la réponse est clairement soutenue."""  # (French prompt here, same as before)
+- Une réponse en français canadien, citant les sources entre crochets comme [1], [2], surtout là où la réponse est clairement soutenue."""  # (French prompt here, same as before)
         followup_prompt_template = """En vous basant uniquement sur les extraits suivants, générez 3 questions de suivi que l’utilisateur pourrait poser.
 N’utilisez que le contenu des sources. N’inventez pas de nouveaux faits.
 
@@ -75,7 +75,10 @@ Q2 : <question>
 Q3 : <question>
 
 SOURCES :
-{citations}"""  # (French followup)
+{citations}
+
+- Toutes les questions doivent être formulées en français canadien.
+"""  # (French followup)
     else:
         index_name = "index-evolve-mo"
         answer_prompt_template = """You are an AI assistant. Use the most relevant and informative source chunks below to answer the user's query.
@@ -221,7 +224,6 @@ SOURCES:
     follow_ups_raw = follow_up_resp.choices[0].message.content.strip()
 
     return {"query": user_query, "ai_response": ai_response, "citations": citations, "follow_ups": follow_ups_raw}
-
 
 
 
