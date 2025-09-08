@@ -109,9 +109,11 @@ SOURCES:
 {citations}"""  # (English followup)
 
     openai_client = AsyncAzureOpenAI(
-        api_version="2025-01-01-preview",
-        azure_endpoint="https://ai-hubdevaiocm273154123411.cognitiveservices.azure.com/"
-    )
+    api_version="2025-01-01-preview",
+    azure_endpoint="https://ai-hubdevaiocm273154123411.cognitiveservices.azure.com/",
+    api_key="1inOabIDqV45oV8EyGXA4qGFqN3Ip42pqA5Qd9TAbJFgUdmTBQUPJQQJ99BCACHYHv6XJ3w3AAAAACOGuszT"  # <-- Hardcoded key
+)
+
 
     search_client = AsyncSearchClient(
         endpoint=AZURE_SEARCH_SERVICE,
@@ -219,7 +221,6 @@ SOURCES:
     follow_ups_raw = follow_up_resp.choices[0].message.content.strip()
 
     return {"query": user_query, "ai_response": ai_response, "citations": citations, "follow_ups": follow_ups_raw}
-
 
 
 
