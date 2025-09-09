@@ -37,6 +37,9 @@ def safe_base64_decode(data):
 # -------------------------
 # Async search and answer
 # -------------------------
+# -------------------------
+# Async search and answer
+# -------------------------
 async def ask_query(user_query, user_id, conversation_store, clanguage="english"):
     # Async Azure credential
     credential = AsyncDefaultAzureCredential()
@@ -65,7 +68,7 @@ Sources :
 Question de l’utilisateur : {query}
 
 Répondez avec :
-- Une réponse en français canadien, citant les sources entre crochets comme [1], [2], surtout là où la réponse est clairement soutenue."""  # (French prompt here, same as before)
+- Une réponse en français canadien, citant les sources entre crochets comme [1], [2], surtout là où la réponse est clairement soutenue."""  
         followup_prompt_template = """En vous basant uniquement sur les extraits suivants, générez 3 questions de suivi que l’utilisateur pourrait poser.
 N’utilisez que le contenu des sources. N’inventez pas de nouveaux faits.
 
@@ -78,7 +81,7 @@ SOURCES :
 {citations}
 
 - Toutes les questions doivent être formulées en français canadien.
-"""  # (French followup)
+"""  
     else:
         index_name = "index-evolve-mo"
         answer_prompt_template = """You are an AI assistant. Use the most relevant and informative source chunks below to answer the user's query.
@@ -99,7 +102,7 @@ Sources:
 User Question: {query}
 
 Respond with:
-- An answer citing sources inline like [1], [2], especially where the answer is clearly supported."""  # (English prompt)
+- An answer citing sources inline like [1], [2], especially where the answer is clearly supported."""  
         followup_prompt_template = """Based only on the following chunks of source material, generate 3 follow-up questions the user might ask.
 Only use the content in the sources. Do not invent new facts.
 
@@ -109,14 +112,13 @@ Q2: <question>
 Q3: <question>
 
 SOURCES:
-{citations}"""  # (English followup)
+{citations}"""  
 
     openai_client = AsyncAzureOpenAI(
-    api_version="2025-01-01-preview",
-    azure_endpoint="https://ai-hubdevaiocm273154123411.cognitiveservices.azure.com/",
-    api_key="1inOabIDqV45oV8EyGXA4qGFqN3Ip42pqA5Qd9TAbJFgUdmTBQUPJQQJ99BCACHYHv6XJ3w3AAAAACOGuszT"  # <-- Hardcoded key
-)
-
+        api_version="2025-01-01-preview",
+        azure_endpoint="https://ai-hubdevaiocm273154123411.cognitiveservices.azure.com/",
+        api_key="1inOabIDqV45oV8EyGXA4qGFqN3Ip42pqA5Qd9TAbJFgUdmTBQUPJQQJ99BCACHYHv6XJ3w3AAAAACOGuszT"
+    )
 
     search_client = AsyncSearchClient(
         endpoint=AZURE_SEARCH_SERVICE,
@@ -124,16 +126,20 @@ SOURCES:
         credential=credential
     )
 
-    # Conversation tracking
-    if user_id not in conversation_store:
-        conversation_store[user_id] = {"history": [], "chat": ""}
+    # -------------------------
+    # Conversation tracking (MODIFIED)
+    # -------------------------
+    session_key = (user_id, clanguage)   # unique per user + language
 
-    conversation_store[user_id]["history"].append(user_query)
-    if len(conversation_store[user_id]["history"]) > 3:
-        conversation_store[user_id]["history"] = conversation_store[user_id]["history"][-3:]
+    if session_key not in conversation_store:
+        conversation_store[session_key] = {"history": [], "chat": ""}
 
-    history_queries = " ".join(conversation_store[user_id]["history"])
-    conversation_history = conversation_store[user_id]["chat"]
+    conversation_store[session_key]["history"].append(user_query)
+    if len(conversation_store[session_key]["history"]) > 3:
+        conversation_store[session_key]["history"] = conversation_store[session_key]["history"][-3:]
+
+    history_queries = " ".join(conversation_store[session_key]["history"])
+    conversation_history = conversation_store[session_key]["chat"]
 
     # -------------------------
     # Async fetch chunks
@@ -213,7 +219,7 @@ SOURCES:
                 updated_chunk["id"] = new_id
                 citations.append(updated_chunk)
 
-    conversation_store[user_id]["chat"] += f"\nUser: {user_query}\nAI: {ai_response}"
+    conversation_store[session_key]["chat"] += f"\nUser: {user_query}\nAI: {ai_response}"
 
     # Follow-up questions
     follow_up_prompt = followup_prompt_template.format(citations=citations)
