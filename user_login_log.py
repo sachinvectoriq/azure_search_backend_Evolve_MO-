@@ -30,7 +30,7 @@ async def log_user():
         conn = await get_db_connection()
 
         insert_query = """
-            INSERT INTO azaisearch_login_log (user_name)
+            INSERT INTO azaisearch_emo_login_log (user_name)
             VALUES ($1)
             RETURNING login_session_id, user_name, date_and_time;
         """
