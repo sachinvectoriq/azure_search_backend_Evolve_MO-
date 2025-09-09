@@ -56,10 +56,10 @@ async def call_log_user():
     return await log_user()
 
 
-from feedback import submit_feedback
-@app.route('/feedback', methods=['POST'])
-async def call_submit_feedback():
-    return await submit_feedback()
+# from feedback import submit_feedback
+# @app.route('/feedback', methods=['POST'])
+# async def call_submit_feedback():
+#     return await submit_feedback()
 
 
 from logging_chat import log_query
