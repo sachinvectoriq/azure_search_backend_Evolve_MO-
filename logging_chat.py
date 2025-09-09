@@ -32,15 +32,15 @@ async def log_query():
 
     # Optional field
     job_title = data.get("job_title")  # None if absent [12]
-
+    query_language = data.get("query_language") 
     
     try:
         conn = await get_db_connection()
 
         insert_query = """
             INSERT INTO azaisearch_emo_logging 
-            (chat_session_id, user_id, user_name, query, ai_response, citations, login_session_id, job_title)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            (chat_session_id, user_id, user_name, query, ai_response, citations, login_session_id, job_title, query_language)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         """
 
         await conn.execute(
@@ -52,7 +52,8 @@ async def log_query():
             data["ai_response"],
             data["citations"],
             data["login_session_id"],
-            job_title # can be None -> inserts NULL
+            job_title, # can be None -> inserts NULL
+            query_language
         )
 
         await conn.close()
