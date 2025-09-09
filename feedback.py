@@ -32,18 +32,19 @@ async def submit_feedback():
         feedback = data.get("feedback")
         login_session_id = data.get("login_session_id")
         user_id = data.get("user_id")
+        query_language = data.get("query_language")
 
         conn = await get_db_connection()
 
         insert_query = """
             INSERT INTO azaisearch_emo_feedback 
-            (chat_session_id, user_name, date_and_time, query, ai_response, citations, feedback_type, feedback, login_session_id, user_id)
-            VALUES ($1, $2, NOW(), $3, $4, $5, $6, $7, $8, $9)
+            (chat_session_id, user_name, date_and_time, query, ai_response, citations, feedback_type, feedback, login_session_id, user_id, query_language)
+            VALUES ($1, $2, NOW(), $3, $4, $5, $6, $7, $8, $9, $10)
         """
 
         await conn.execute(insert_query,
             chat_session_id, user_name, query, ai_response,
-            citations, feedback_type, feedback, login_session_id, user_id
+            citations, feedback_type, feedback, login_session_id, user_id, query_language
         )
 
         await conn.close()
