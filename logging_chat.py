@@ -38,7 +38,7 @@ async def log_query():
         conn = await get_db_connection()
 
         insert_query = """
-            INSERT INTO azaisearch_logging 
+            INSERT INTO azaisearch_emo_logging 
             (chat_session_id, user_id, user_name, query, ai_response, citations, login_session_id, job_title)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         """
