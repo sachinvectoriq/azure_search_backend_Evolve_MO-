@@ -50,10 +50,10 @@ async def ask():
         return jsonify({"error": str(e)}), 500
 
 ---- All other sync routes ----
-from user_login_log import log_user
-@app.route('/log/user', methods=['POST'])
-async def call_log_user():
-    return await log_user()
+# from user_login_log import log_user
+# @app.route('/log/user', methods=['POST'])
+# async def call_log_user():
+#     return await log_user()
 
 
 # from feedback import submit_feedback
