@@ -69,10 +69,10 @@ async def call_log_query():
     return await log_query()
 
 
-#from get_settings import get_settings
-#@app.route('/get_settings', methods=['GET'])
-#async def call_get_settings():
-    #return await get_settings()
+from get_settings import get_settings
+@app.route('/get_settings', methods=['GET'])
+async def call_get_settings():
+    return await get_settings()
     
 
 #from update_settings import update_settings
